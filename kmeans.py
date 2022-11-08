@@ -105,7 +105,7 @@ def save_image(subCenter, center, filename):
             tmp.append(int(float(center[i, j]) * 256))
         cent.append(tuple(tmp))
     print(cent)
-    fp = open("./images/" + filename, 'rb')
+    fp = open("./miniImage/" + filename, 'rb')
     data = image.open(fp)
     m, n = data.size
     res = image.new("RGB", (m, n))
@@ -124,10 +124,10 @@ if __name__ == '__main__':
     # 聚类中心个数
     k = 2
     # 加载数据
-    points = load_data('./images/web_1.jpg')
+    points = load_data('./miniImage/car_1.jpg')
     center = get_center(points, k)
     print(center)
     subCenter = kmeans(points, k, center)
-    save_image(subCenter, center, 'web_1.jpg')
+    save_image(subCenter, center, 'car_1.jpg')
     # save_result('./learn/sub_pp', subCenter)
     # save_result('./learn/center_pp', center)

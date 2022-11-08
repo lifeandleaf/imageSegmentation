@@ -14,7 +14,7 @@ for line in f_center.readlines():
 print(center)
 f_center.close()
 
-fp = open("../images/web_3.jpg", "rb")
+fp = open("../miniImage/car_1.jpg", "rb")
 im = image.open(fp)
 # 新建一个图片
 m, n = im.size

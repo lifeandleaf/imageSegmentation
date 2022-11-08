@@ -28,7 +28,7 @@ if __name__ == "__main__":
     k = 2#聚类中心的个数
     # 1、导入数据
     print("---------- 1.load data ------------")
-    data = load_data("../images/web_3.jpg")
+    data = load_data("../miniImage/car_1.jpg")
     # 2、利用kMeans++聚类
     print("---------- 2.run kmeans++ ------------")
     run_kmeanspp(data, k)
