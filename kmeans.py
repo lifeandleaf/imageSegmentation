@@ -2,7 +2,7 @@
 import PIL.Image as image
 import matplotlib.pyplot as plt
 import numpy as np
-
+from random import random
 
 def load_data(image_path):
     fp = open(image_path, 'rb')
@@ -28,28 +28,38 @@ def distance(x, y):
 def nearest(point, k_center):
     sz = np.shape(k_center)[0]
     min_dst = distance(point, k_center[0, ])
-    cla = 0
     for i in range(sz):
         d = distance(point, k_center[i, ])
         if d < min_dst:
-            d = min_dst
-            cla = i
+            min_dst = d
     return min_dst
 
 def get_center(points, k):
-    n = np.shape(points)[1]
+    m, n = np.shape(points)
     center = np.mat(np.zeros((k, n)))
-    for j in range(n):
-        minJ = np.min(points[:, j])
-        rangeJ = np.max(points[:, j]) - minJ
-        center[:, j] = minJ * np.mat(np.ones((k, 1))) + np.random.rand(k, 1) * rangeJ
+    index = np.random.randint(0, m)
+    center[0, ] = np.copy(points[index, ])
+    d = [0.0 for _ in range(m)]
+    for i in range(1, k):
+        sum_all = 0
+        for j in range(m):
+            d[j] = nearest(points[j, ], center[0:i, ])
+            sum_all += d[j]
+        sum_all *= random()
+        for j, di in enumerate(d):
+            sum_all -= di
+            if sum_all > 0:
+                continue
+            center[i] = np.copy(points[j, ])
+            break
     return center
+
 
 def kmeans(points, k, center):
     m, n = np.shape(points)
     subCenter = np.mat(np.zeros((m, 2)))
-    change= True
-    while change:
+    change = True
+    while change == True:
         change = False
         for i in range(m):
             minDst = np.inf
@@ -62,7 +72,6 @@ def kmeans(points, k, center):
             if subCenter[i, 0] != minIndex:
                 change = True
                 subCenter[i, ] = np.mat([minIndex, minDst])
-        # print(subCenter)
         # 重新计算聚类中心
         for j in range(k):
             sum_all = np.mat(np.zeros((1, n)))
@@ -86,27 +95,23 @@ def save_result(file_name, source):
         for j in range(n):
             tmp.append(str(source[i, j]))
         f.write("\t".join(tmp) + "\n")
-        f.close()
+    f.close()
 
 def save_image(subCenter, center, filename):
+    cent = []
+    for i in range(k):
+        tmp = []
+        for j in range(3):
+            tmp.append(int(float(center[i, j]) * 256))
+        cent.append(tuple(tmp))
+    print(cent)
     fp = open("./images/" + filename, 'rb')
     data = image.open(fp)
     m, n = data.size
     res = image.new("RGB", (m, n))
-
-    cent = []
-    k, n = np.shape(center)
-    for i in range(k):
-        tmp = []
-        for j in range(n):
-            print(center[i, j])
-            tmp.append(float(center[i, j]))
-        cent.append(tuple(tmp))
-    for i in range(m):
-        for j in range(n):
-            id = int(subCenter[i * n + j, 0])
-            print(cent[id])
-            res.putpixel((i, j), cent[id])
+    for i in range(len(subCenter)):
+        index_n = int(subCenter[i,0])
+        res.putpixel((int(i/n), int(i%n)), (cent[index_n]))
     res.save("./kmeans_res/" + filename)
     plt.figure()
     plt.subplot(1, 2, 1)
@@ -121,6 +126,8 @@ if __name__ == '__main__':
     # 加载数据
     points = load_data('./images/web_1.jpg')
     center = get_center(points, k)
+    print(center)
     subCenter = kmeans(points, k, center)
-    print("show")
     save_image(subCenter, center, 'web_1.jpg')
+    # save_result('./learn/sub_pp', subCenter)
+    # save_result('./learn/center_pp', center)

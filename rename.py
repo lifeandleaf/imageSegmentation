@@ -12,9 +12,15 @@ import PIL.Image as image
 # a = np.array([1, 2, 3])
 # print(type(int(a[0] * 2)))
 
-fp = open('./kmeans_res/web_1.jpg', "rb")
-im = image.open(fp)
-m, n = im.size
-for i in range(m):
-    for j in range(n):
-        print(im.putpixel((i, j), ))
+# fp = open('./kmeans_res/web_1.jpg', "rb")
+# im = image.open(fp)
+# m, n = im.size
+# for i in range(m):
+#     for j in range(n):
+#         print(im.putpixel((i, j), ))
+
+a = np.array([[1, 2], [3, 4], [5, 6]])
+b = np.array([3, 4])
+a[0] = b
+m, n = np.shape(a)[0:2]
+print(m, n)
